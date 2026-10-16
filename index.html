@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>not — vibecoder</title>
+
+  <meta name="description" content="not — the best vibecoder ever. Rust apps, Scratch projects and Discord bots.">
+  <meta name="theme-color" content="#0e0e10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e10'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='19' font-weight='bold' fill='%23f0a13a' text-anchor='middle'%3En%3C/text%3E%3C/svg%3E">
+
+  <!-- Social preview. Add an og:image once you have a screenshot handy. -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="not — vibecoder">
+  <meta property="og:description" content="Rust apps, Scratch projects and Discord bots.">
+  <meta property="og:url" content="https://not6741.lol/">
+  <meta property="og:site_name" content="not">
+  <!-- <meta property="og:image" content="https://not6741.lol/preview.png"> -->
+  <meta name="twitter:card" content="summary">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #0e0e10;
+      --surface: #17171a;
+      --surface-2: #1e1e22;
+      --border: #292930;
+      --border-strong: #3a3a43;
+      --text: #f3f3f5;
+      --muted: #a4a4ad;
+      --faint: #75757f;
+      --accent: #f0a13a;
+      --accent-soft: rgba(240, 161, 58, 0.12);
+      --grad: linear-gradient(135deg, #ff8a1e 0%, #ffc061 100%);
+      --radius: 16px;
+      --radius-sm: 11px;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -20px rgba(0, 0, 0, 0.7);
+      --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.5), 0 28px 56px -22px rgba(255, 138, 30, 0.32);
+      --ease: cubic-bezier(.22, .61, .36, 1);
+      --maxw: 1060px;
+      --nav-h: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Warm glow behind the top of the page. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(720px 420px at 82% -6%, rgba(255, 138, 30, 0.18), transparent 62%),
+        radial-gradient(560px 360px at 4% 2%, rgba(255, 180, 80, 0.08), transparent 60%);
+    }
+
+    /* Faint dot grid, faded out toward the bottom. */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+      background-size: 24px 24px;
+      -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 72%);
+      mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 72%);
+    }
+
+    ::selection { background: rgba(255, 138, 30, 0.3); color: #fff; }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -64px;
+      z-index: 100;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #20130a;
+      font-weight: 600;
+      text-decoration: none;
+      transition: top .2s var(--ease);
+    }
+    .skip-link:focus { top: 12px; }
+
+    /* ---------------- nav ---------------- */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(14, 14, 16, 0.72);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      backdrop-filter: blur(14px) saturate(140%);
+      border-bottom: 1px solid var(--border);
+    }
+    .site-nav .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: var(--nav-h);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+    }
+    .brand .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--grad);
+      color: #23150a;
+      font-weight: 900;
+      font-size: 1.05rem;
+      box-shadow: 0 8px 20px -10px rgba(255, 138, 30, 0.9);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-links a {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .95rem;
+      font-weight: 500;
+      transition: color .18s var(--ease), background .18s var(--ease);
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+    .nav-links a.active { color: var(--accent); background: var(--accent-soft); }
+
+    /* ---------------- buttons ---------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .55em;
+      padding: .82em 1.4em;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font: inherit;
+      font-size: .98rem;
+      font-weight: 600;
+      line-height: 1;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .18s var(--ease), background .2s, border-color .2s, color .2s, box-shadow .2s;
+    }
+    .btn-primary {
+      background: var(--grad);
+      color: #23150a;
+      box-shadow: 0 12px 28px -14px rgba(255, 138, 30, 0.85);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -14px rgba(255, 138, 30, 0.95); }
+    .btn-ghost {
+      background: var(--surface);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+    .btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ---------------- structure ---------------- */
+    .hero { padding: clamp(56px, 9vw, 98px) 0 clamp(40px, 6vw, 64px); }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0 0 18px;
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .eyebrow .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .hero h1 {
+      margin: 0 0 18px;
+      font-size: clamp(2.6rem, 8vw, 4.4rem);
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: -.04em;
+    }
+    .hero h1 .grad {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero .lede {
+      margin: 0 0 32px;
+      max-width: 54ch;
+      font-size: clamp(1.05rem, 2.3vw, 1.22rem);
+      color: var(--muted);
+    }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    section { padding: clamp(36px, 5vw, 52px) 0; scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+    .section-head { margin-bottom: 30px; }
+    .kicker {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .section-head h2,
+    .contact-card h2 {
+      margin: 0;
+      font-size: clamp(1.55rem, 4vw, 2.15rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+    .sub { margin: .6rem 0 0; color: var(--muted); max-width: 62ch; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .about-card,
+    .skill-card { padding: clamp(22px, 3vw, 34px); }
+
+    .about-card p { margin: 0; font-size: clamp(1rem, 2.2vw, 1.1rem); line-height: 1.85; color: var(--muted); }
+    .about-card p + p { margin-top: 1em; }
+    .about-card strong { color: var(--text); font-weight: 600; }
+    .about-card .accent { color: var(--accent); font-weight: 600; }
+
+    /* ---------------- skills ---------------- */
+    .skill-group { margin-bottom: 28px; }
+    .skill-group:last-child { margin-bottom: 0; }
+    .skill-group h3 {
+      margin: 0 0 13px;
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      font: inherit;
+      font-size: .95rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(240, 161, 58, 0.35);
+      border-radius: 999px;
+      padding: 8px 17px;
+      cursor: pointer;
+      transition: transform .16s var(--ease), background .2s, border-color .2s, color .2s;
+    }
+    .chip:hover,
+    .chip[aria-expanded="true"] {
+      background: var(--grad);
+      border-color: transparent;
+      color: #23150a;
+      transform: translateY(-2px);
+    }
+    .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ---------------- projects ---------------- */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 24px;
+      background: linear-gradient(180deg, var(--surface-2), var(--surface));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      transition: transform .2s var(--ease), border-color .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--border-strong); box-shadow: var(--shadow-hover); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .card h3 { margin: 0; font-size: 1.18rem; font-weight: 700; letter-spacing: -.02em; }
+    .card p { margin: 0; color: var(--muted); font-size: .97rem; flex: 1; }
+    .card .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .card .tag {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .02em;
+      color: var(--faint);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+    .card .links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 2px; }
+    .card .links a {
+      display: inline-flex;
+      align-items: center;
+      gap: .45em;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: .95rem;
+      transition: gap .18s var(--ease), color .18s;
+    }
+    .card .links a:hover { color: #ffcf83; gap: .65em; }
+    .badge {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .badge-beta { background: rgba(240, 161, 58, 0.16); color: var(--accent); border: 1px solid rgba(240, 161, 58, 0.4); }
+    .badge-off { background: rgba(184, 59, 94, 0.16); color: #ef8aa8; border: 1px solid rgba(184, 59, 94, 0.45); }
+
+    /* ---------------- contact ---------------- */
+    .contact-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: clamp(28px, 4vw, 46px);
+      text-align: center;
+    }
+    .contact-card .sub { margin: 0; }
+    .socials { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 4px; }
+
+    /* ---------------- footer ---------------- */
+    .site-footer {
+      margin-top: 32px;
+      padding: 30px 0 40px;
+      border-top: 1px solid var(--border);
+      color: var(--faint);
+      font-size: .9rem;
+    }
+    .site-footer .inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .site-footer a { color: var(--muted); text-decoration: none; transition: color .18s var(--ease); }
+    .site-footer a:hover { color: var(--accent); }
+
+    /* ---------------- skill popup ---------------- */
+    .popup {
+      position: fixed;
+      z-index: 1000;
+      width: min(400px, calc(100vw - 32px));
+      max-height: 72vh;
+      overflow-y: auto;
+      padding: 20px 22px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      box-shadow: 0 30px 70px -24px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(240, 161, 58, 0.08);
+      opacity: 0;
+      transform: translateY(6px) scale(.98);
+      transition: opacity .16s var(--ease), transform .16s var(--ease);
+      pointer-events: none;
+    }
+    .popup.show { opacity: 1; transform: none; pointer-events: auto; }
+    .popup .popup-title { margin: 0 0 6px; font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+    .popup .popup-desc { margin: 0 0 14px; color: var(--muted); font-size: .93rem; line-height: 1.6; }
+    .popup .popup-label {
+      margin: 0 0 8px;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .popup pre {
+      margin: 0;
+      padding: 14px 16px;
+      background: #0b0b0d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+      font-size: .82rem;
+      line-height: 1.6;
+      color: #dcdce2;
+    }
+    .popup .blocks {
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      background: #0b0b0d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .tk-kw { color: #d78bf0; }
+    .tk-bi { color: #6fb0ff; }
+    .tk-str { color: #93d07a; }
+    .tk-num { color: #e0a35e; }
+    .tk-com { color: #66666f; font-style: italic; }
+
+    /* ---------------- responsive ---------------- */
+    @media (max-width: 620px) {
+      .container { padding: 0 20px; }
+      .nav-links a { padding: 7px 10px; font-size: .88rem; }
+      .brand .word { display: none; }
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container inner">
+      <a class="brand" href="#top">
+        <span class="mark" aria-hidden="true">n</span>
+        <span class="word">not</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about" class="active">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="hero" id="top">
+      <div class="container">
+        <p class="eyebrow"><span class="dot" aria-hidden="true"></span> vibecoder · rust · scratch</p>
+        <h1>hey, i'm <span class="grad">not</span>.</h1>
+        <p class="lede">
+          i build things fast — usually with ai in the loop, always for fun. scratch got me
+          into code; these days it's rust apps and discord bots.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#projects">See projects <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a>
+          <a class="btn btn-ghost" href="https://github.com/not6741lol" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">about</p>
+          <h2>the best vibecoder ever</h2>
+        </div>
+        <div class="panel about-card">
+          <p>
+            i'm <strong>not</strong>. i like building things and learning by breaking them.
+            scratch is where i started and where i'm strongest, and i've been shipping
+            <strong>java</strong>, <strong>python</strong> and <strong>sql</strong> — with a growing
+            pile of <strong>rust</strong> on the side.
+          </p>
+          <p>not even <span class="accent">lcgaming</span> can beat me.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">skills</p>
+          <h2>languages &amp; tools</h2>
+          <p class="sub">Tap any skill to see a hello-world snippet.</p>
+        </div>
+        <div class="panel skill-card">
+          <div class="skill-group">
+            <h3>Advanced</h3>
+            <div class="chips">
+              <button type="button" class="chip" data-skill="Scratch">Scratch</button>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h3>Basic</h3>
+            <div class="chips">
+              <button type="button" class="chip" data-skill="Java">Java</button>
+              <button type="button" class="chip" data-skill="Python">Python</button>
+              <button type="button" class="chip" data-skill="Rust">Rust</button>
+              <button type="button" class="chip" data-skill="SQL">SQL</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <p class="kicker">work</p>
+          <h2>featured projects</h2>
+          <p class="sub">
+            Mostly open source. More on <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>.
+          </p>
+        </div>
+        <div class="grid" id="projectsGrid"><!-- filled by js --></div>
+        <noscript>
+          <div class="panel about-card" style="margin-top:20px;">
+            <p>Enable JavaScript to see the project list, or browse them on <a href="https://github.com/not6741lol">GitHub</a>.</p>
+          </div>
+        </noscript>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="panel contact-card">
+          <p class="kicker">contact</p>
+          <h2>say hi</h2>
+          <p class="sub">Got a project, a bug, or just want to chat? Email me or find me on GitHub.</p>
+          <div class="socials">
+            <button type="button" class="btn btn-primary" id="emailBtn"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email me</button>
+            <a class="btn btn-ghost" href="https://github.com/not6741lol" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
+            <!-- <a class="btn btn-ghost" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a> -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <span>&copy; 2026 not</span>
+      <a href="https://github.com/not6741lol" target="_blank" rel="noopener">github.com/not6741lol</a>
+    </div>
+  </footer>
+
+  <div id="skillPopup" class="popup" role="dialog" aria-label="Skill details" aria-hidden="true"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const $ = (sel, ctx = document) => ctx.querySelector(sel);
+      const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+      const escapeHtml = (value) => String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      /* ---------------- projects ---------------- */
+
+      // Add projects here. Optional fields:
+      //   tags:   ["Rust", "WASM"]           -> small pills on the card
+      //   status: "beta" | "wip" | "discontinued" | "code lost"  -> badge
+      const projects = [
+        {
+          title: "Convert",
+          desc: "A unit converter built three times in rust — egui, fltk and raw win32 — sharing a single core crate, plus a WebAssembly demo that runs in your browser.",
+          tags: ["Rust", "egui", "fltk", "Win32", "WASM"],
+          links: [
+            { label: "Live demo", url: "https://not6741lol.github.io/unit-converter/" },
+            { label: "Source", url: "https://github.com/not6741lol/unit-converter" }
+          ]
+        },
+        {
+          title: "notdeepseek",
+          desc: "A discord bot powered by deepseek, written in python.",
+          tags: ["Python", "Discord"],
+          links: [
+            { label: "Source", url: "https://github.com/not6741lol/notdeepseek" }
+          ]
+        }
+      ];
+
+      const BADGES = {
+        beta: { label: "Beta", cls: "badge-beta" },
+        wip: { label: "WIP", cls: "badge-beta" },
+        discontinued: { label: "Discontinued", cls: "badge-off" },
+        "code lost": { label: "Code lost", cls: "badge-off" }
+      };
+
+      const arrow = '<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
+
+      function projectCard(project) {
+        const badge = BADGES[project.status];
+        const badgeHtml = badge
+          ? `<span class="badge ${badge.cls}">${escapeHtml(badge.label)}</span>`
+          : "";
+
+        const tags = (project.tags || [])
+          .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
+          .join("");
+
+        const links = (project.links || [])
+          .map(link => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.label)} ${arrow}</a>`)
+          .join("");
+
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML =
+          `<div class="card-top"><h3>${escapeHtml(project.title)}</h3>${badgeHtml}</div>` +
+          `<p>${escapeHtml(project.desc)}</p>` +
+          (tags ? `<div class="tags">${tags}</div>` : "") +
+          (links ? `<div class="links">${links}</div>` : "");
+        return card;
+      }
+
+      function renderProjects() {
+        const grid = $("#projectsGrid");
+        if (!grid) return;
+        grid.textContent = "";
+        projects.forEach(project => grid.appendChild(projectCard(project)));
+      }
+
+      /* ---------------- syntax highlighting ---------------- */
+
+      const LANGUAGES = {
+        java: {
+          keywords: ["public", "class", "static", "void", "private", "final", "new", "return", "int", "boolean", "double"],
+          builtins: ["System", "String"],
+          line: "//",
+          block: true
+        },
+        rust: {
+          keywords: ["fn", "let", "mut", "pub", "struct", "impl", "use", "match", "enum", "const", "return", "as", "mod", "trait", "for", "in", "if", "else", "while", "loop"],
+          builtins: ["println", "vec", "String", "Vec", "Some", "None", "Ok", "Err"],
+          line: "//",
+          block: true
+        },
+        python: {
+          keywords: ["def", "return", "if", "else", "elif", "for", "while", "import", "from", "class", "with", "as", "lambda", "True", "False", "None"],
+          builtins: ["print", "len", "range", "str", "int", "float", "list", "dict", "set"],
+          line: "#"
+        },
+        sql: {
+          keywords: ["SELECT", "FROM", "WHERE", "CREATE", "TABLE", "INSERT", "INTO", "VALUES", "UPDATE", "DELETE", "JOIN", "ON", "GROUP", "BY", "ORDER", "LIMIT"],
+          builtins: [],
+          line: "--",
+          caseInsensitive: true
+        }
+      };
+
+      function highlight(code, langName) {
+        const cfg = LANGUAGES[langName] || {};
+        const ci = !!cfg.caseInsensitive;
+        const fold = (value) => (ci ? value.toUpperCase() : value);
+        const keywords = new Set((cfg.keywords || []).map(fold));
+        const builtins = new Set((cfg.builtins || []).map(fold));
+        const isStart = (c) => /[A-Za-z_$]/.test(c);
+        const isPart = (c) => /[A-Za-z0-9_$]/.test(c);
+        const span = (cls, text) => `<span class="tk-${cls}">${escapeHtml(text)}</span>`;
+
+        let out = "";
+        let i = 0;
+        const n = code.length;
+
+        while (i < n) {
+          const c = code[i];
+          const next = code[i + 1];
+
+          if (c === '"' || c === "'" || c === "`") {
+            let j = i + 1;
+            while (j < n && code[j] !== c) {
+              if (code[j] === "\\") j++;
+              j++;
+            }
+            if (j < n) j++;
+            out += span("str", code.slice(i, j));
+            i = j;
+            continue;
+          }
+
+          if (cfg.line && code.startsWith(cfg.line, i)) {
+            let j = i + cfg.line.length;
+            while (j < n && code[j] !== "\n") j++;
+            out += span("com", code.slice(i, j));
+            i = j;
+            continue;
+          }
+
+          if (cfg.block && c === "/" && next === "*") {
+            let j = i + 2;
+            while (j < n && !(code[j] === "*" && code[j + 1] === "/")) j++;
+            j = Math.min(n, j + 2);
+            out += span("com", code.slice(i, j));
+            i = j;
+            continue;
+          }
+
+          if (/[0-9]/.test(c) && (i === 0 || !isPart(code[i - 1]))) {
+            let j = i;
+            while (j < n && /[0-9.]/.test(code[j])) j++;
+            out += span("num", code.slice(i, j));
+            i = j;
+            continue;
+          }
+
+          if (isStart(c)) {
+            let j = i;
+            while (j < n && isPart(code[j])) j++;
+            const word = code.slice(i, j);
+            const folded = fold(word);
+            if (keywords.has(folded)) out += span("kw", word);
+            else if (builtins.has(folded)) out += span("bi", word);
+            else out += escapeHtml(word);
+            i = j;
+            continue;
+          }
+
+          out += escapeHtml(c);
+          i++;
+        }
+        return out;
+      }
+
+      /* ---------------- skills data ---------------- */
+
+      const SKILLS = {
+        Scratch: {
+          desc: "A visual programming language from MIT — where i learned to think in logic and loops.",
+          blocks: true
+        },
+        Java: {
+          desc: "A class-based, object-oriented language built for portability.",
+          lang: "java",
+          code: `public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`
+        },
+        Python: {
+          desc: "A readable, versatile language — good for bots and quick scripts.",
+          lang: "python",
+          code: `print("Hello, World!")`
+        },
+        Rust: {
+          desc: "A fast, memory-safe systems language. Used for the Convert app.",
+          lang: "rust",
+          code: `fn main() {
+    let km = 5.0;
+    let miles = km * 0.621371;
+    println!("{km} km = {miles:.2} miles");
+}`
+        },
+        SQL: {
+          desc: "A language for managing and querying relational databases.",
+          lang: "sql",
+          code: `CREATE TABLE greetings (message TEXT);
+INSERT INTO greetings VALUES ('Hello, World!');
+SELECT * FROM greetings;`
+        }
+      };
+
+      /* ---------------- skill popup ---------------- */
+
+      const popup = $("#skillPopup");
+      let activeChip = null;
+
+      function buildSkillHtml(name, skill) {
+        let html =
+          `<p class="popup-title">${escapeHtml(name)}</p>` +
+          `<p class="popup-desc">${escapeHtml(skill.desc)}</p>`;
+
+        if (skill.blocks) {
+          html +=
+            `<p class="popup-label">Example</p>` +
+            `<div class="blocks"><img src="scratchblocks.svg" alt="Scratch blocks: when green flag clicked, say Hello, World!" loading="lazy" decoding="async"></div>`;
+        } else if (skill.code) {
+          html +=
+            `<p class="popup-label">Example</p>` +
+            `<pre><code>${highlight(skill.code, skill.lang)}</code></pre>`;
+        }
+        return html;
+      }
+
+      function placePopup(chip) {
+        const rect = chip.getBoundingClientRect();
+        const gap = 12;
+        const pw = popup.offsetWidth;
+        const ph = popup.offsetHeight;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        let left;
+        if (rect.right + gap + pw <= vw - 10) left = rect.right + gap;
+        else if (rect.left - gap - pw >= 10) left = rect.left - gap - pw;
+        else left = Math.min(Math.max(10, rect.left), vw - pw - 10);
+
+        let top = rect.top - 8;
+        if (top + ph > vh - 10) top = vh - ph - 10;
+        if (top < 10) top = 10;
+
+        popup.style.left = Math.max(10, left) + "px";
+        popup.style.top = top + "px";
+      }
+
+      function showPopup(chip) {
+        const name = chip.dataset.skill;
+        const skill = SKILLS[name];
+        if (!skill) return;
+
+        if (activeChip === chip) { hidePopup(); return; }
+
+        popup.innerHTML = buildSkillHtml(name, skill);
+        popup.setAttribute("aria-hidden", "false");
+        popup.classList.add("show");
+
+        if (activeChip) activeChip.setAttribute("aria-expanded", "false");
+        chip.setAttribute("aria-expanded", "true");
+        activeChip = chip;
+
+        placePopup(chip);
+      }
+
+      function hidePopup() {
+        popup.classList.remove("show");
+        popup.setAttribute("aria-hidden", "true");
+        if (activeChip) activeChip.setAttribute("aria-expanded", "false");
+        activeChip = null;
+      }
+
+      $$(".chip").forEach(chip => {
+        chip.setAttribute("aria-expanded", "false");
+        chip.addEventListener("click", (event) => {
+          event.stopPropagation();
+          showPopup(chip);
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".popup") && !event.target.closest(".chip")) hidePopup();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") hidePopup();
+      });
+      window.addEventListener("resize", hidePopup);
+      window.addEventListener("scroll", hidePopup, { passive: true });
+
+      /* ---------------- nav scroll-spy ---------------- */
+
+      const navLinks = $$(".nav-links a");
+      const sections = navLinks
+        .map(link => document.querySelector(link.getAttribute("href")))
+        .filter(Boolean);
+
+      navLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          navLinks.forEach(other => other.classList.toggle("active", other === link));
+        });
+      });
+
+      if ("IntersectionObserver" in window && sections.length) {
+        const spy = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const hash = "#" + entry.target.id;
+            navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === hash));
+          });
+        }, { rootMargin: "-45% 0px -55% 0px" });
+        sections.forEach(section => spy.observe(section));
+      }
+
+      /* ---------------- contact email ---------------- */
+      // Split on purpose: the full address never appears in the HTML source,
+      // which keeps the simplest email-scrapers from picking it up.
+      const EMAIL_USER = "contact";
+      const EMAIL_DOMAIN = "not6741.lol";
+      const emailBtn = $("#emailBtn");
+      if (emailBtn) {
+        const address = EMAIL_USER + "@" + EMAIL_DOMAIN;
+        emailBtn.setAttribute("aria-label", "Email " + address);
+        emailBtn.setAttribute("title", address);
+        emailBtn.addEventListener("click", () => {
+          window.location.href = "mailto:" + address;
+        });
+      }
+
+      /* ---------------- init ---------------- */
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", renderProjects);
+      } else {
+        renderProjects();
+      }
+    })();
+  </script>
+</body>
+</html>
