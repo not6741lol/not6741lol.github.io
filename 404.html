@@ -17,60 +17,20 @@
           ((window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark");
       } catch (e) {}
       document.documentElement.setAttribute("data-theme", theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", theme === "light" ? "#f6f6f8" : "#0e0e10");
     })();
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/site.css">
 
   <style>
-    :root {
-      --bg: #0e0e10;
-      --surface: #17171a;
-      --border: #292930;
-      --text: #f3f3f5;
-      --muted: #a4a4ad;
-      --accent: #f0a13a;
-      --grad: linear-gradient(135deg, #ff8a1e 0%, #ffc061 100%);
-      --glow: rgba(255, 138, 30, 0.18);
-      color-scheme: dark;
-    }
-    :root[data-theme="light"] {
-      --bg: #f6f6f8;
-      --surface: #ffffff;
-      --border: #e4e4e8;
-      --text: #16161a;
-      --muted: #56565f;
-      --accent: #b96a12;
-      --grad: linear-gradient(135deg, #e07a12 0%, #f2a63f 100%);
-      --glow: rgba(224, 122, 18, 0.16);
-      color-scheme: light;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 40px 24px;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      background: radial-gradient(700px 420px at 50% -10%, var(--glow), transparent 62%);
-    }
-
-    .wrap { max-width: 560px; text-align: center; }
+    /* Everything else comes from site.css, so the palette lives in one place. */
+    body { display: grid; place-items: center; padding: 40px 24px; text-align: center; }
+    .wrap { width: 100%; max-width: 560px; }
 
     .code {
       margin: 0 0 6px;
@@ -84,33 +44,13 @@
       color: transparent;
       -webkit-text-fill-color: transparent;
     }
-    h1 {
+    .wrap h1 {
       margin: 0 0 12px;
       font-size: clamp(1.5rem, 5vw, 2rem);
       font-weight: 800;
       letter-spacing: -.03em;
     }
-    p.msg { margin: 0 0 28px; color: var(--muted); }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .55em;
-      padding: .82em 1.5em;
-      border-radius: 999px;
-      background: var(--grad);
-      color: #23150a;
-      font-weight: 600;
-      text-decoration: none;
-      box-shadow: 0 12px 28px -14px rgba(255, 138, 30, 0.85);
-      transition: transform .18s cubic-bezier(.22, .61, .36, 1);
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { transition-duration: .001ms !important; }
-    }
+    .msg { margin: 0 0 28px; color: var(--muted); }
   </style>
 </head>
 <body>
@@ -118,7 +58,7 @@
     <p class="code">404</p>
     <h1>nothing here.</h1>
     <p class="msg">this page doesn't exist — or it wandered off to a better vps.</p>
-    <a class="btn" href="/">&larr; go home</a>
+    <a class="btn btn-primary" href="/">&larr; go home</a>
   </main>
 </body>
 </html>

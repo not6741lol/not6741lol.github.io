@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — not</title>
+
+  <meta name="description" content="Short write-ups from not — mostly things that took longer than they should have.">
+  <meta name="theme-color" content="#0e0e10">
+  <link rel="canonical" href="https://not6741.lol/notes/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e10'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='19' font-weight='bold' fill='%23f0a13a' text-anchor='middle'%3En%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/atom+xml" title="not — notes" href="/feed.xml">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Notes — not">
+  <meta property="og:description" content="Short write-ups from not — mostly things that took longer than they should have.">
+  <meta property="og:url" content="https://not6741.lol/notes/">
+  <meta property="og:site_name" content="not">
+  <meta property="og:image" content="https://not6741.lol/preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta property="og:image:alt" content="A terminal prompt beside the word not">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://not6741.lol/preview.png">
+
+  <script>
+    (function () {
+      var theme = "dark";
+      try {
+        theme = localStorage.getItem("theme") ||
+          ((window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark");
+      } catch (e) {}
+      document.documentElement.setAttribute("data-theme", theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", theme === "light" ? "#f6f6f8" : "#0e0e10");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/site.css">
+
+  <noscript>
+    <style>
+      .reveal { opacity: 1; transform: none; }
+    </style>
+  </noscript>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="container inner">
+      <a class="brand" href="/">
+        <span class="mark" aria-hidden="true">n</span>
+        <span class="word">not</span>
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#projects">Projects</a></li>
+          <li><a href="/notes/" data-page="notes">Notes</a></li>
+          <li><a href="/#contact">Contact</a></li>
+        </ul>
+        <button id="themeToggle" class="icon-btn" type="button" aria-label="Switch theme" title="Switch theme">
+          <i class="fa-solid fa-sun" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="page-head">
+      <div class="container">
+        <p class="kicker">notes</p>
+        <h1>things that took too long</h1>
+        <p class="lede">
+          Short write-ups, usually about something that was broken for an afternoon and turned out
+          to have a one-line cause. Also available as <a href="/feed.xml">RSS</a>.
+        </p>
+      </div>
+    </header>
+
+    <section>
+      <div class="container">
+
+        <article class="post panel prose post-anchor" id="certificate">
+          <div class="post-head">
+            <h2>why my certificate wouldn't issue</h2>
+            <time datetime="2026-10-16">2026-10-16</time>
+          </div>
+
+          <p>
+            I pointed my domain at GitHub Pages and the <strong>Enforce HTTPS</strong> checkbox sat greyed
+            out, with <em>“The certificate does not exist yet.”</em> Every check I knew how to make said my
+            DNS was perfect: the four GitHub A records on the apex, no <code>AAAA</code> or <code>CAA</code>
+            records, no DNSSEC, and no trace of the old host.
+          </p>
+
+          <p>The actual cause was dumber, and I could not find it documented anywhere.</p>
+
+          <p>
+            GitHub asks Let's Encrypt for a certificate, then polls DNS to prove you control the domain.
+            My first check ran while the <em>old</em> A record was still cached, so it failed. That part is
+            normal. What isn't obvious is that the job does not simply retry — it backs off, and the delay
+            gets longer every time. So each subsequent attempt reused the same stale answer and it settled
+            into a comfortable permanent failure.
+          </p>
+
+          <p>
+            There is no button to force a re-check. But the certificate request is tied to your
+            <strong>custom domain setting</strong>, not to your site's content. So you can make it start over
+            by removing the domain and putting it back:
+          </p>
+
+          <pre><code>git rm CNAME
+git commit -m "drop custom domain"
+git push</code></pre>
+
+          <p>
+            Then wait. Roughly twenty seconds later the Pages API reported <code>"cname": ""</code>, which
+            means it noticed. Put the file back:
+          </p>
+
+          <pre><code>printf 'example.com\n' &gt; CNAME
+git add CNAME
+git commit -m "restore custom domain"
+git push</code></pre>
+
+          <p>
+            A fresh certificate appeared in about twenty seconds — <code>state: approved</code>, expiring
+            2027-01-14. Same DNS the whole time.
+          </p>
+
+          <p>
+            <strong>The lesson:</strong> if your certificate won't issue, don't debug your DNS. It is almost
+            certainly fine. Debug GitHub's cached view of it. And once the backoff has grown, waiting will
+            never fix it — you have to make it ask again from scratch.
+          </p>
+        </article>
+
+        <article class="post panel prose post-anchor" id="swiss">
+          <div class="post-head">
+            <h2>one 1.5 MB binary, three jobs</h2>
+            <time datetime="2026-10-09">2026-10-09</time>
+          </div>
+
+          <p>
+            <a href="https://github.com/not6741lol/swiss">swiss</a> is a command line tool that does three
+            unrelated things I kept needing, in one binary:
+          </p>
+
+          <ul>
+            <li><strong>unlock</strong> — find out what process is holding a file hostage, and optionally kill it.</li>
+            <li><strong>pdf</strong> — merge, split, rotate, strip metadata, or inspect a PDF.</li>
+            <li><strong>brand</strong> — turn one image into a full web branding set: favicons, an app manifest and a social card.</li>
+          </ul>
+
+          <p>
+            The interesting one is <strong>unlock</strong>, because the easy way to find a file lock on
+            Windows is to run <code>handle.exe</code> from Sysinternals and parse its output. I didn't want a
+            second download. Windows has had a proper API for this since Vista — the
+            <strong>Restart Manager</strong> — and nobody remembers it exists. You open a session, register the
+            file, ask who's using it, and get back a list of processes. It is exactly the API Windows Update
+            uses to work out what's blocking a reboot.
+          </p>
+
+          <p>
+            <strong>pdf</strong> is built on <code>lopdf</code>. The trick that mattered most was pruning: after
+            splitting a document you have to drop the unused objects and renumber the survivors, or each
+            output page carries the entire original file with it. Doing that took split output from roughly
+            a megabyte per page down to about 100 KB.
+          </p>
+
+          <p>
+            <strong>brand</strong> does its own text rendering with <code>fontdue</code> and writes
+            <code>favicon.ico</code> by hand — it's just a header followed by PNG payloads — so there's no
+            image processing dependency to install.
+          </p>
+
+          <p>
+            The whole thing lands at <strong>1.52 MB</strong>. That's mostly the release profile rather than
+            anything clever I did:
+          </p>
+
+          <pre><code>[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"</code></pre>
+
+          <p>
+            Honestly the size is the feature. A tool like this is only useful if grabbing it is easier than
+            not grabbing it.
+          </p>
+        </article>
+
+        <article class="post panel prose post-anchor" id="artwork">
+          <div class="post-head">
+            <h2>the artwork on this site made itself</h2>
+            <time datetime="2026-10-02">2026-10-02</time>
+          </div>
+
+          <p>
+            Every image on this site is generated by <code>swiss</code>, the same binary from the previous
+            post. I find this funnier than it probably is. When I add a project, I don't open a design app —
+            I run one command.
+          </p>
+
+          <p>
+            The little coloured marks next to each project are drawn with raw pixel primitives, no SVG and no
+            fonts: a rounded square, then the glyph on top. A Swiss cross is two rectangles. The swap arrows
+            are two rectangles and two triangles. The chat bubble is a rounded rectangle, a triangle for the
+            tail, and three circles punched through in the background colour.
+          </p>
+
+          <p>
+            Those marks then go through <code>swiss brand og</code>, which draws the dark card, the accent
+            bar, the mark on the left and the text on the right.
+          </p>
+
+          <pre><code>swiss brand og mark.png \
+  --title "swiss" \
+  --subtitle "one small binary, three small jobs" \
+  --size 1280x720</code></pre>
+
+          <h3>why 1280x720 and not the usual 1200x630</h3>
+
+          <p>
+            Almost every guide tells you to make social cards 1200×630, because that's what Facebook
+            standardised. These cards aren't only social previews though — they're also the thumbnails on the
+            project grid, and that grid crop is <code>aspect-ratio: 16/9</code> with
+            <code>object-fit: cover</code>.
+          </p>
+
+          <p>
+            1200×630 is 1.9:1. A 16:9 box is 1.78:1. So the browser would trim roughly 43 pixels off each
+            side, and the first thing it would eat is the accent bar down the left edge — the one element
+            holding the whole design together.
+          </p>
+
+          <p>
+            1280×720 is exactly 16:9, so <code>cover</code> crops nothing at all. One image, correct in both
+            places. Sometimes the boring answer is just the right dimensions.
+          </p>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <span>&copy; <span id="year">2026</span> not</span>
+      <div class="footer-links">
+        <a href="/notes/">Notes</a>
+        <a href="/colophon/">Colophon</a>
+        <a href="/feed.xml">RSS</a>
+        <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <button id="toTop" class="to-top" type="button" aria-label="Back to top" title="Back to top">
+    <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="/site.js"></script>
+</body>
+</html>

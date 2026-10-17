@@ -7,7 +7,10 @@
 
   <meta name="description" content="not — the best vibecoder ever. Rust apps, Scratch projects and Discord bots.">
   <meta name="theme-color" content="#0e0e10">
+  <link rel="canonical" href="https://not6741.lol/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e10'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='19' font-weight='bold' fill='%23f0a13a' text-anchor='middle'%3En%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="application/atom+xml" title="not — notes" href="/feed.xml">
 
   <!-- Social preview card, 1280x720 so Discord/Slack/X render it large. -->
   <meta property="og:type" content="website">
@@ -23,6 +26,19 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://not6741.lol/preview.png">
   <meta name="twitter:image:alt" content="A terminal prompt beside the word not">
+
+  <!-- The email address is never written here. No email in the structured data either. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "not",
+    "alternateName": "not6741",
+    "url": "https://not6741.lol/",
+    "sameAs": ["https://github.com/not6741lol"],
+    "knowsAbout": ["Rust", "Scratch", "Java", "Python", "SQL", "PDF", "Discord bots"]
+  }
+  </script>
 
   <!-- Set the theme before anything paints, so there is no flash of the wrong colours. -->
   <script>
@@ -42,244 +58,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/site.css">
 
   <style>
-    :root {
-      --bg: #0e0e10;
-      --surface: #17171a;
-      --surface-2: #1e1e22;
-      --border: #292930;
-      --border-strong: #3a3a43;
-      --text: #f3f3f5;
-      --muted: #a4a4ad;
-      --faint: #75757f;
-      --accent: #f0a13a;
-      --accent-soft: rgba(240, 161, 58, 0.12);
-      --grad: linear-gradient(135deg, #ff8a1e 0%, #ffc061 100%);
-      --radius: 16px;
-      --radius-sm: 11px;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 40px -20px rgba(0, 0, 0, 0.7);
-      --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.5), 0 28px 56px -22px rgba(255, 138, 30, 0.32);
-      --ease: cubic-bezier(.22, .61, .36, 1);
-      --maxw: 1060px;
-      --nav-h: 64px;
-      --glow-a: rgba(255, 138, 30, 0.18);
-      --glow-b: rgba(255, 180, 80, 0.08);
-      --dot: rgba(255, 255, 255, 0.055);
-      --nav-bg: rgba(14, 14, 16, 0.72);
-      color-scheme: dark;
-    }
-
-    :root[data-theme="light"] {
-      --bg: #f6f6f8;
-      --surface: #ffffff;
-      --surface-2: #ffffff;
-      --border: #e4e4e8;
-      --border-strong: #cfcfd6;
-      --text: #16161a;
-      --muted: #56565f;
-      --faint: #85858f;
-      --accent: #b96a12;
-      --accent-soft: rgba(185, 106, 18, 0.12);
-      --grad: linear-gradient(135deg, #e07a12 0%, #f2a63f 100%);
-      --shadow: 0 1px 2px rgba(20, 20, 30, 0.06), 0 16px 40px -26px rgba(20, 20, 30, 0.3);
-      --shadow-hover: 0 2px 6px rgba(20, 20, 30, 0.08), 0 26px 52px -26px rgba(185, 106, 18, 0.4);
-      --glow-a: rgba(224, 122, 18, 0.16);
-      --glow-b: rgba(242, 166, 63, 0.1);
-      --dot: rgba(20, 20, 30, 0.05);
-      --nav-bg: rgba(255, 255, 255, 0.78);
-      color-scheme: light;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-      scrollbar-color: var(--border-strong) transparent;
-    }
-    ::-webkit-scrollbar { width: 11px; height: 11px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb {
-      background: var(--border-strong);
-      border: 3px solid var(--bg);
-      border-radius: 999px;
-    }
-    ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      font-size: 16px;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
-      transition: background .3s var(--ease), color .3s var(--ease);
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events: none;
-      background:
-        radial-gradient(720px 420px at 82% -6%, var(--glow-a), transparent 62%),
-        radial-gradient(560px 360px at 4% 2%, var(--glow-b), transparent 60%);
-      transition: background .3s var(--ease);
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      background-image: radial-gradient(var(--dot) 1px, transparent 1px);
-      background-size: 24px 24px;
-      -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 72%);
-      mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 72%);
-    }
-
-    ::selection { background: rgba(255, 138, 30, 0.3); color: #fff; }
-    :root[data-theme="light"] ::selection { background: rgba(224, 122, 18, 0.25); color: #16161a; }
-
-    img { max-width: 100%; display: block; }
-    a { color: inherit; }
-
-    .container {
-      width: 100%;
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 0 28px;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: 12px;
-      top: -64px;
-      z-index: 100;
-      padding: 10px 16px;
-      border-radius: 10px;
-      background: var(--accent);
-      color: #20130a;
-      font-weight: 600;
-      text-decoration: none;
-      transition: top .2s var(--ease);
-    }
-    .skip-link:focus { top: 12px; }
-
-    /* ---------------- nav ---------------- */
-    .site-nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: var(--nav-bg);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      backdrop-filter: blur(14px) saturate(140%);
-      border-bottom: 1px solid var(--border);
-      transition: background .3s var(--ease), border-color .3s var(--ease);
-    }
-    .site-nav .inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      min-height: var(--nav-h);
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 11px;
-      text-decoration: none;
-      font-weight: 800;
-      letter-spacing: -.02em;
-      color: var(--text);
-    }
-    .brand .mark {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      background: var(--grad);
-      color: #23150a;
-      font-weight: 900;
-      font-size: 1.05rem;
-      box-shadow: 0 8px 20px -10px rgba(255, 138, 30, 0.9);
-    }
-    .nav-right { display: flex; align-items: center; gap: 10px; }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .nav-links a {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 999px;
-      color: var(--muted);
-      text-decoration: none;
-      font-size: .95rem;
-      font-weight: 500;
-      transition: color .18s var(--ease), background .18s var(--ease);
-    }
-    .nav-links a:hover { color: var(--text); background: var(--surface); }
-    .nav-links a.active { color: var(--accent); background: var(--accent-soft); }
-
-    .icon-btn {
-      width: 38px;
-      height: 38px;
-      flex: none;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--muted);
-      font-size: .95rem;
-      cursor: pointer;
-      transition: color .18s var(--ease), border-color .18s var(--ease), transform .18s var(--ease);
-    }
-    .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
-    .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-    /* ---------------- buttons ---------------- */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .55em;
-      padding: .82em 1.4em;
-      border: 1px solid transparent;
-      border-radius: 999px;
-      font: inherit;
-      font-size: .98rem;
-      font-weight: 600;
-      line-height: 1;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform .18s var(--ease), background .2s, border-color .2s, color .2s, box-shadow .2s;
-    }
-    .btn-primary {
-      background: var(--grad);
-      color: #23150a;
-      box-shadow: 0 12px 28px -14px rgba(255, 138, 30, 0.85);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -14px rgba(255, 138, 30, 0.95); }
-    .btn-ghost {
-      background: var(--surface);
-      border-color: var(--border-strong);
-      color: var(--text);
-    }
-    .btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
-    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-
     /* ---------------- hero ---------------- */
     .hero { padding: clamp(48px, 8vw, 92px) 0 clamp(40px, 6vw, 64px); }
     .hero-grid {
@@ -328,7 +109,7 @@
     }
     .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
 
-    /* terminal card */
+    /* ---------------- terminal ---------------- */
     .terminal {
       border-radius: var(--radius);
       background: #0c0c0f;
@@ -343,6 +124,15 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-7px); }
     }
+    /* Once you start typing, stop bobbing about. */
+    .terminal:focus-within {
+      animation: none;
+      border-color: rgba(240, 161, 58, 0.45);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.5),
+        0 30px 60px -30px rgba(0, 0, 0, 0.9),
+        0 0 0 3px rgba(240, 161, 58, 0.12);
+    }
     .terminal-bar {
       display: flex;
       align-items: center;
@@ -356,55 +146,59 @@
     .terminal-bar .amber { background: #febc2e; }
     .terminal-bar .green { background: #28c840; }
     .terminal-title { margin-left: auto; color: #6d6d78; font-size: .74rem; }
-    .terminal-body { padding: 16px 18px 20px; color: #d7d7de; }
-    .terminal-body .line { margin: 0 0 4px; white-space: pre-wrap; word-break: break-word; }
-    .terminal-body .prompt { color: #f0a13a; }
-    .terminal-body .out { color: #8b8b96; margin-bottom: 12px; }
-    .caret {
-      display: inline-block;
-      width: 8px;
-      height: 15px;
-      vertical-align: -2px;
-      background: #f0a13a;
-      animation: blink 1.1s steps(1) infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+    .terminal-body { padding: 16px 18px 18px; color: #d7d7de; }
 
-    /* ---------------- structure ---------------- */
-    section { padding: clamp(36px, 5vw, 52px) 0; scroll-margin-top: calc(var(--nav-h) + 16px); }
-
-    .section-head { margin-bottom: 30px; }
-    .kicker {
-      margin: 0 0 10px;
-      color: var(--accent);
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .18em;
-      text-transform: uppercase;
+    .term-out {
+      max-height: 170px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
-    .section-head h2,
-    .contact-card h2 {
-      margin: 0;
-      font-size: clamp(1.55rem, 4vw, 2.15rem);
-      font-weight: 800;
-      letter-spacing: -.03em;
+    .term-out .line { margin: 0 0 4px; white-space: pre-wrap; word-break: break-word; }
+    .term-out .prompt { color: #f0a13a; }
+    .term-out .out { color: #8b8b96; margin-bottom: 12px; }
+    .term-out .note { color: #66666f; font-style: italic; margin-bottom: 10px; }
+    .term-out .err { color: #ff8f8f; margin-bottom: 12px; }
+    .term-out .ok { color: #7fd18a; margin-bottom: 12px; }
+    .term-out .help {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 2px 16px;
+      margin: 0 0 12px;
     }
-    .sub { margin: .6rem 0 0; color: var(--muted); max-width: 62ch; }
+    .term-out .help .k { color: #f0a13a; white-space: nowrap; }
+    .term-out .help .d { color: #8b8b96; }
+    .term-out .k { color: #f0a13a; }
 
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      transition: background .3s var(--ease), border-color .3s var(--ease);
+    .term-form { display: flex; align-items: center; gap: 8px; margin: 0; }
+    .term-form .prompt { color: #f0a13a; flex: none; }
+    .term-input {
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      font: inherit;
+      color: #d7d7de;
+      caret-color: #f0a13a;
     }
-    .about-card,
-    .skill-card { padding: clamp(22px, 3vw, 34px); }
-
-    .about-card p { margin: 0; font-size: clamp(1rem, 2.2vw, 1.1rem); line-height: 1.85; color: var(--muted); }
-    .about-card p + p { margin-top: 1em; }
-    .about-card strong { color: var(--text); font-weight: 600; }
-    .about-card .accent { color: var(--accent); font-weight: 600; }
+    .term-send {
+      flex: none;
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: none;
+      color: #6d6d78;
+      font-size: .7rem;
+      cursor: pointer;
+      opacity: .45;
+      transition: opacity .18s var(--ease), color .18s var(--ease);
+    }
+    .term-send:hover, .term-send:focus-visible { opacity: 1; color: #f0a13a; }
 
     /* ---------------- skills ---------------- */
     .skill-group { margin-bottom: 28px; }
@@ -466,13 +260,6 @@
       transition: transform .45s var(--ease);
     }
     .card:hover .thumb img { transform: scale(1.05); }
-    .thumb-icon {
-      display: grid;
-      place-items: center;
-      font-size: 2.6rem;
-      color: var(--accent);
-      background: linear-gradient(135deg, rgba(240, 161, 58, 0.16), rgba(240, 161, 58, 0.04));
-    }
     .card-body {
       display: flex;
       flex-direction: column;
@@ -493,6 +280,16 @@
       border-radius: 999px;
       padding: 3px 10px;
     }
+    .card .stat {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--faint);
+      font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+      font-size: .75rem;
+      letter-spacing: .01em;
+    }
+    .card .stat .live { color: var(--accent); }
     .card .links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 2px; }
     .card .links a {
       display: inline-flex;
@@ -528,68 +325,6 @@
     }
     .contact-card .sub { margin: 0; }
     .socials { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 4px; }
-
-    /* ---------------- footer ---------------- */
-    .site-footer {
-      margin-top: 32px;
-      padding: 30px 0 40px;
-      border-top: 1px solid var(--border);
-      color: var(--faint);
-      font-size: .9rem;
-    }
-    .site-footer .inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    .site-footer a { color: var(--muted); text-decoration: none; transition: color .18s var(--ease); }
-    .site-footer a:hover { color: var(--accent); }
-
-    /* ---------------- floating bits ---------------- */
-    .to-top {
-      position: fixed;
-      right: 22px;
-      bottom: 22px;
-      z-index: 90;
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      border: 1px solid var(--border-strong);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transform: translateY(10px);
-      pointer-events: none;
-      transition: opacity .25s var(--ease), transform .25s var(--ease), color .18s, border-color .18s;
-    }
-    .to-top.show { opacity: 1; transform: none; pointer-events: auto; }
-    .to-top:hover { color: var(--accent); border-color: var(--accent); }
-    .to-top:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 28px;
-      z-index: 1100;
-      display: inline-flex;
-      align-items: center;
-      gap: .5em;
-      max-width: calc(100vw - 40px);
-      padding: 11px 18px;
-      border-radius: 999px;
-      background: var(--surface);
-      border: 1px solid var(--border-strong);
-      color: var(--text);
-      font-size: .9rem;
-      font-weight: 500;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transform: translate(-50%, 20px);
-      pointer-events: none;
-      transition: opacity .2s var(--ease), transform .2s var(--ease);
-    }
-    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* ---------------- skill popup ---------------- */
     .popup {
@@ -646,41 +381,13 @@
     .tk-num { color: #e0a35e; }
     .tk-com { color: #66666f; font-style: italic; }
 
-    /* ---------------- scroll reveal ---------------- */
-    .reveal {
-      opacity: 0;
-      transform: translateY(18px);
-      transition:
-        opacity .6s var(--ease) var(--d, 0ms),
-        transform .6s var(--ease) var(--d, 0ms),
-        background-color .3s var(--ease),
-        border-color .3s var(--ease);
-    }
-    .reveal.in { opacity: 1; transform: none; }
-    /* Cards animate via a wrapper so their own hover transitions stay intact. */
-    .grid > .reveal { display: grid; }
-
     /* ---------------- responsive ---------------- */
     @media (max-width: 900px) {
       .hero-grid { grid-template-columns: 1fr; }
       .terminal { max-width: 480px; }
     }
     @media (max-width: 620px) {
-      .container { padding: 0 20px; }
-      .nav-links a { padding: 7px 9px; font-size: .86rem; }
-      .brand .word { display: none; }
       .grid { grid-template-columns: 1fr; }
-      .nav-right { gap: 6px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: .001ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .001ms !important;
-        scroll-behavior: auto !important;
-      }
-      .reveal { opacity: 1 !important; transform: none !important; }
     }
   </style>
   <noscript>
@@ -695,16 +402,16 @@
 
   <nav class="site-nav" aria-label="Primary">
     <div class="container inner">
-      <a class="brand" href="#top">
+      <a class="brand" href="/">
         <span class="mark" aria-hidden="true">n</span>
         <span class="word">not</span>
       </a>
       <div class="nav-right">
         <ul class="nav-links">
-          <li><a href="#about" class="active">About</a></li>
-          <li><a href="#skills">Skills</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="/#about" class="active">About</a></li>
+          <li><a href="/#projects">Projects</a></li>
+          <li><a href="/notes/" data-page="notes">Notes</a></li>
+          <li><a href="/#contact">Contact</a></li>
         </ul>
         <button id="themeToggle" class="icon-btn" type="button" aria-label="Switch theme" title="Switch theme">
           <i class="fa-solid fa-sun" aria-hidden="true"></i>
@@ -729,17 +436,26 @@
           </div>
         </div>
 
-        <div class="terminal" aria-hidden="true">
+        <div class="terminal" id="terminal">
           <div class="terminal-bar">
             <span class="dot red"></span><span class="dot amber"></span><span class="dot green"></span>
             <span class="terminal-title">not@not6741:~</span>
           </div>
           <div class="terminal-body">
-            <p class="line"><span class="prompt">$</span> whoami</p>
-            <p class="line out">not</p>
-            <p class="line"><span class="prompt">$</span> cat stack.txt</p>
-            <p class="line out">scratch · java · python · rust · sql</p>
-            <p class="line"><span class="prompt">$</span> <span class="caret"></span></p>
+            <div class="term-out" id="termOut" role="log" aria-live="polite" aria-label="Terminal output">
+              <p class="line"><span class="prompt">$</span> whoami</p>
+              <p class="line out">not</p>
+              <p class="line"><span class="prompt">$</span> cat stack.txt</p>
+              <p class="line out">scratch · java · python · rust · sql</p>
+              <p class="line note"># it's real — type help and press enter</p>
+            </div>
+            <form class="term-form" id="termForm" autocomplete="off">
+              <span class="prompt" aria-hidden="true">$</span>
+              <input class="term-input" id="termInput" type="text" name="cmd"
+                     aria-label="Terminal. Type a command and press enter, or type help for a list."
+                     spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off">
+              <button class="term-send" type="submit" aria-label="Run command"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+            </form>
           </div>
         </div>
       </div>
@@ -796,7 +512,8 @@
           <p class="kicker">work</p>
           <h2>featured projects</h2>
           <p class="sub">
-            Mostly open source. More on <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>.
+            Mostly open source. More on <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>,
+            or read the <a href="/notes/">notes</a> for how some of it got built.
           </p>
         </div>
         <div class="grid" id="projectsGrid"><!-- filled by js --></div>
@@ -818,7 +535,6 @@
             <button type="button" class="btn btn-primary" id="emailBtn"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email me</button>
             <button type="button" class="btn btn-ghost" id="copyEmailBtn"><i class="fa-solid fa-copy" aria-hidden="true"></i> Copy address</button>
             <a class="btn btn-ghost" href="https://github.com/not6741lol" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a>
-            <!-- <a class="btn btn-ghost" href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener"><i class="fa-brands fa-discord" aria-hidden="true"></i> Discord</a> -->
           </div>
         </div>
       </div>
@@ -828,7 +544,12 @@
   <footer class="site-footer">
     <div class="container inner">
       <span>&copy; <span id="year">2026</span> not</span>
-      <a href="https://github.com/not6741lol" target="_blank" rel="noopener">github.com/not6741lol</a>
+      <div class="footer-links">
+        <a href="/notes/">Notes</a>
+        <a href="/colophon/">Colophon</a>
+        <a href="/feed.xml">RSS</a>
+        <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>
+      </div>
     </div>
   </footer>
 
@@ -839,69 +560,69 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="skillPopup" class="popup" role="dialog" aria-label="Skill details" aria-hidden="true"></div>
 
+  <script src="/site.js"></script>
   <script>
     (function () {
       "use strict";
 
-      const $ = (sel, ctx = document) => ctx.querySelector(sel);
-      const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+      const { $, $$, escapeHtml, toast, setTheme, currentTheme } = window.Site;
 
-      const escapeHtml = (value) => String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
+      /* ---------------- contact email ---------------- */
+      // Split on purpose: the full address never appears in the HTML source,
+      // which keeps the simplest email-scrapers from picking it up.
+      const EMAIL_USER = "contact";
+      const EMAIL_DOMAIN = "not6741.lol";
+      const emailAddress = EMAIL_USER + "@" + EMAIL_DOMAIN;
 
-      /* ---------------- theme toggle ---------------- */
+      const emailBtn = $("#emailBtn");
+      if (emailBtn) {
+        emailBtn.setAttribute("aria-label", "Email " + emailAddress);
+        emailBtn.setAttribute("title", emailAddress);
+        emailBtn.addEventListener("click", () => { window.location.href = "mailto:" + emailAddress; });
+      }
 
-      const themeToggle = $("#themeToggle");
-
-      function syncThemeUi(theme) {
-        const icon = themeToggle && themeToggle.querySelector("i");
-        if (icon) icon.className = theme === "light" ? "fa-solid fa-moon" : "fa-solid fa-sun";
-        if (themeToggle) {
-          themeToggle.setAttribute("aria-label", theme === "light" ? "Switch to dark theme" : "Switch to light theme");
+      function fallbackCopy(text) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.top = "-1000px";
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          return ok;
+        } catch (e) {
+          return false;
         }
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute("content", theme === "light" ? "#f6f6f8" : "#0e0e10");
       }
 
-      function setTheme(theme) {
-        document.documentElement.setAttribute("data-theme", theme);
-        try { localStorage.setItem("theme", theme); } catch (e) {}
-        syncThemeUi(theme);
+      function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text).then(() => true).catch(() => fallbackCopy(text));
+        }
+        return Promise.resolve(fallbackCopy(text));
       }
 
-      const currentTheme = () =>
-        document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
-
-      syncThemeUi(currentTheme());
-      if (themeToggle) {
-        themeToggle.addEventListener("click", () => {
-          setTheme(currentTheme() === "light" ? "dark" : "light");
+      const copyBtn = $("#copyEmailBtn");
+      if (copyBtn) {
+        copyBtn.setAttribute("aria-label", "Copy email address");
+        copyBtn.addEventListener("click", () => {
+          copyText(emailAddress).then((ok) => {
+            toast(ok ? "Copied " + emailAddress : "Copy failed — " + emailAddress);
+          });
         });
-      }
-
-      /* ---------------- toast ---------------- */
-
-      const toast = $("#toast");
-      let toastTimer = null;
-
-      function showToast(message) {
-        if (!toast) return;
-        toast.textContent = message;
-        toast.classList.add("show");
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
       }
 
       /* ---------------- projects ---------------- */
 
       // Add projects here. Optional fields:
-      //   image:  "https://.../shot.png"     -> real screenshot on the card
-      //   icon:   "fa-brands fa-discord"     -> gradient icon tile instead
+      //   image:  "shot.png"                 -> card image (16:9 works best)
       //   tags:   ["Rust", "WASM"]           -> small pills
       //   status: "beta" | "wip" | "discontinued" | "code lost"  -> badge
+      //   stat:   { size: "1.52 MB", repo: "owner/name" }
+      //           size is static; repo pulls a live download count from GitHub.
       const projects = [
         {
           title: "Convert",
@@ -918,6 +639,7 @@
           desc: "One small binary, three small jobs: it finds whatever is holding a file hostage, merges and splits PDFs, and turns a single image into a full web branding set.",
           image: "swiss.png",
           tags: ["Rust", "CLI", "PDF", "Windows"],
+          stat: { size: "1.52 MB", repo: "not6741lol/swiss" },
           links: [
             { label: "Download", url: "https://github.com/not6741lol/swiss/releases/latest" },
             { label: "Source", url: "https://github.com/not6741lol/swiss" }
@@ -949,16 +671,19 @@
           ? `<span class="badge ${badge.cls}">${escapeHtml(badge.label)}</span>`
           : "";
 
-        let thumb = "";
-        if (project.image) {
-          thumb = `<div class="thumb"><img src="${escapeHtml(project.image)}" alt="Screenshot of ${escapeHtml(project.title)}" loading="lazy" decoding="async"></div>`;
-        } else if (project.icon) {
-          thumb = `<div class="thumb thumb-icon"><i class="${escapeHtml(project.icon)}" aria-hidden="true"></i></div>`;
-        }
-
         const tags = (project.tags || [])
           .map(tag => `<span class="tag">${escapeHtml(tag)}</span>`)
           .join("");
+
+        let statHtml = "";
+        if (project.stat) {
+          const bits = [];
+          if (project.stat.size) bits.push(`<span>${escapeHtml(project.stat.size)}</span>`);
+          if (project.stat.repo) {
+            bits.push(`<span class="live" data-repo="${escapeHtml(project.stat.repo)}" hidden></span>`);
+          }
+          if (bits.length) statHtml = `<div class="stat">${bits.join("")}</div>`;
+        }
 
         const links = (project.links || [])
           .map(link => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.label)} ${arrow}</a>`)
@@ -967,10 +692,11 @@
         const card = document.createElement("article");
         card.className = "card";
         card.innerHTML =
-          thumb +
+          `<div class="thumb"><img src="${escapeHtml(project.image)}" alt="Card art for ${escapeHtml(project.title)}" loading="lazy" decoding="async"></div>` +
           `<div class="card-body">` +
             `<div class="card-top"><h3>${escapeHtml(project.title)}</h3>${badgeHtml}</div>` +
             `<p>${escapeHtml(project.desc)}</p>` +
+            statHtml +
             (tags ? `<div class="tags">${tags}</div>` : "") +
             (links ? `<div class="links">${links}</div>` : "") +
           `</div>`;
@@ -987,6 +713,48 @@
           wrap.style.setProperty("--d", Math.min(index * 70, 350) + "ms");
           wrap.appendChild(projectCard(project));
           grid.appendChild(wrap);
+        });
+      }
+
+      /* ---------------- live download counts ---------------- */
+      // Public GitHub API, so this is rate limited per IP. Results are cached in
+      // sessionStorage and every failure path stays silent: the static size still
+      // renders, so the card never looks broken.
+
+      function loadDownloadCounts() {
+        const targets = $$("[data-repo]");
+        if (!targets.length || !window.fetch) return;
+
+        const TTL = 10 * 60 * 1000;
+        let cache = {};
+        try { cache = JSON.parse(sessionStorage.getItem("gh-downloads") || "{}") || {}; } catch (e) {}
+
+        function paint(repo, count) {
+          if (!count) return;  // don't advertise a zero
+          const label = count === 1 ? "1 download" : count.toLocaleString() + " downloads";
+          targets.forEach((el) => {
+            if (el.dataset.repo !== repo) return;
+            el.textContent = " · " + label;
+            el.hidden = false;
+          });
+        }
+
+        Array.from(new Set(targets.map(el => el.dataset.repo))).forEach((repo) => {
+          const hit = cache[repo];
+          if (hit && Date.now() - hit.t < TTL) { paint(repo, hit.n); return; }
+
+          fetch("https://api.github.com/repos/" + repo + "/releases", {
+            headers: { Accept: "application/vnd.github+json" }
+          })
+            .then(res => (res.ok ? res.json() : Promise.reject(new Error("http " + res.status))))
+            .then((releases) => {
+              const total = (releases || []).reduce((sum, rel) =>
+                sum + (rel.assets || []).reduce((s, asset) => s + (asset.download_count || 0), 0), 0);
+              cache[repo] = { n: total, t: Date.now() };
+              try { sessionStorage.setItem("gh-downloads", JSON.stringify(cache)); } catch (e) {}
+              paint(repo, total);
+            })
+            .catch(() => { /* offline, rate limited or blocked — fine */ });
         });
       }
 
@@ -1113,7 +881,7 @@
           code: `print("Hello, World!")`
         },
         Rust: {
-          desc: "A fast, memory-safe systems language. Used for the Convert app.",
+          desc: "A fast, memory-safe systems language. Used for the Convert app and swiss.",
           lang: "rust",
           code: `fn main() {
     let km = 5.0;
@@ -1143,7 +911,7 @@ SELECT * FROM greetings;`
         if (skill.blocks) {
           html +=
             `<p class="popup-label">Example</p>` +
-            `<div class="blocks"><img src="scratchblocks.svg" alt="Scratch blocks: when green flag clicked, say Hello, World!" loading="lazy" decoding="async"></div>`;
+            `<div class="blocks"><img src="/scratchblocks.svg" alt="Scratch blocks: when green flag clicked, say Hello, World!" loading="lazy" decoding="async"></div>`;
         } else if (skill.code) {
           html +=
             `<p class="popup-label">Example</p>` +
@@ -1214,128 +982,219 @@ SELECT * FROM greetings;`
       });
       window.addEventListener("resize", hidePopup);
 
-      /* ---------------- contact email ---------------- */
-      // Split on purpose: the full address never appears in the HTML source,
-      // which keeps the simplest email-scrapers from picking it up.
-      const EMAIL_USER = "contact";
-      const EMAIL_DOMAIN = "not6741.lol";
-      const emailAddress = EMAIL_USER + "@" + EMAIL_DOMAIN;
+      /* ---------------- terminal ---------------- */
+      // The hero terminal is real. It runs entirely in the browser and only
+      // touches things that already exist on this page.
 
-      const emailBtn = $("#emailBtn");
-      if (emailBtn) {
-        emailBtn.setAttribute("aria-label", "Email " + emailAddress);
-        emailBtn.setAttribute("title", emailAddress);
-        emailBtn.addEventListener("click", () => {
-          window.location.href = "mailto:" + emailAddress;
-        });
-      }
+      (function initTerminal() {
+        const root = $("#terminal");
+        const out = $("#termOut");
+        const form = $("#termForm");
+        const field = $("#termInput");
+        if (!root || !out || !form || !field) return;
 
-      function copyText(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-          return navigator.clipboard.writeText(text).then(() => true).catch(() => fallbackCopy(text));
+        const PLACES = {
+          convert:     { label: "Convert",     url: "https://not6741lol.github.io/unit-converter/" },
+          swiss:       { label: "swiss",       url: "https://github.com/not6741lol/swiss/releases/latest" },
+          notdeepseek: { label: "notdeepseek", url: "https://github.com/not6741lol/notdeepseek" },
+          github:      { label: "GitHub",      url: "https://github.com/not6741lol" }
+        };
+
+        const SECTIONS = ["about", "skills", "projects", "contact"];
+
+        const HELP = [
+          ["help",                "this list"],
+          ["whoami",              "who you're talking to"],
+          ["ls",                  "what i've built"],
+          ["cat <file>",          "stack.txt or about.txt"],
+          ["open <thing>",        "convert · swiss · notdeepseek · github"],
+          ["goto <section>",      "about · skills · projects · contact"],
+          ["theme [light|dark]",  "flip the colours"],
+          ["notes",               "the devlog"],
+          ["colophon",            "how this site is made"],
+          ["contact",             "open your mail client"],
+          ["clear",               "wipe the screen"]
+        ];
+
+        const history = [];
+        let cursor = -1;
+
+        function write(cls, html) {
+          const p = document.createElement("p");
+          p.className = "line" + (cls ? " " + cls : "");
+          p.innerHTML = html;
+          out.appendChild(p);
+          out.scrollTop = out.scrollHeight;
         }
-        return Promise.resolve(fallbackCopy(text));
-      }
 
-      function fallbackCopy(text) {
-        try {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.setAttribute("readonly", "");
-          ta.style.position = "fixed";
-          ta.style.top = "-1000px";
-          document.body.appendChild(ta);
-          ta.select();
-          const ok = document.execCommand("copy");
-          document.body.removeChild(ta);
-          return ok;
-        } catch (e) {
-          return false;
+        function text(value, cls) { write(cls || "out", escapeHtml(value)); }
+
+        const KEYS = Object.keys(PLACES).join(" · ");
+
+        const COMMANDS = {
+          help() {
+            write("out", '<div class="help">' + HELP.map(([name, desc]) =>
+              `<span class="k">${escapeHtml(name)}</span><span class="d">${escapeHtml(desc)}</span>`
+            ).join("") + "</div>");
+          },
+
+          whoami() {
+            write("out", "not — vibecoder. scratch, java, python, sql, and a lot of rust.");
+          },
+
+          ls() {
+            write("out", '<span class="k">convert/</span>  <span class="k">swiss/</span>  <span class="k">notdeepseek/</span>  <span class="k">notes/</span>  colophon/');
+          },
+
+          pwd() { text("/home/not"); },
+
+          cat(args) {
+            const file = (args[0] || "").toLowerCase();
+            if (!file) { text("usage: cat stack.txt", "err"); return; }
+            if (file === "stack.txt") { write("out", "scratch · java · python · rust · sql"); return; }
+            if (file === "about.txt") {
+              write("out", "i build things fast — usually with ai in the loop, always for fun.");
+              return;
+            }
+            if (file === "readme.md" || file === "readme") { write("out", "you're looking at it."); return; }
+            text("cat: " + args[0] + ": no such file", "err");
+          },
+
+          open(args) {
+            const what = (args[0] || "").toLowerCase();
+            if (!what) { text("which one? " + KEYS, "err"); return; }
+            const place = PLACES[what];
+            if (!place) { text("don't know '" + args[0] + "' — try " + KEYS, "err"); return; }
+            text("opening " + place.label + "…", "ok");
+            window.open(place.url, "_blank", "noopener");
+          },
+
+          goto(args) {
+            const where = (args[0] || "").toLowerCase().replace(/^#/, "");
+            if (!where) { text("where to? " + SECTIONS.join(" · "), "err"); return; }
+            const target = document.getElementById(where);
+            if (!target) { text("no section called '" + args[0] + "'", "err"); return; }
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            text("→ " + where, "ok");
+          },
+
+          theme(args) {
+            const want = (args[0] || "").toLowerCase();
+            if (want && want !== "light" && want !== "dark") {
+              text("theme: expected light or dark", "err");
+              return;
+            }
+            const next = want || (currentTheme() === "light" ? "dark" : "light");
+            setTheme(next);
+            text("theme: " + next, "ok");
+          },
+
+          notes() { text("opening notes…", "ok"); window.location.href = "/notes/"; },
+          colophon() { text("opening colophon…", "ok"); window.location.href = "/colophon/"; },
+
+          contact() {
+            text(emailAddress, "out");
+            window.location.href = "mailto:" + emailAddress;
+          },
+
+          github() { text("opening GitHub…", "ok"); window.open(PLACES.github.url, "_blank", "noopener"); },
+
+          date() { text(new Date().toString()); },
+
+          echo(args) { text(args.join(" ")); },
+
+          swiss() {
+            write("out", '<div class="help">' +
+              '<span class="k">unlock</span><span class="d">find what is holding a file hostage</span>' +
+              '<span class="k">pdf</span><span class="d">merge · split · rotate · strip · info</span>' +
+              '<span class="k">brand</span><span class="d">one image → favicons, manifest, social card</span>' +
+              '</div>');
+            text("1.52 MB of rust. no dependencies to install.", "note");
+          },
+
+          clear() { out.textContent = ""; },
+
+          sudo() { text("nice try. this terminal doesn't have root.", "err"); },
+
+          exit() { text("there's no escape — but there is a scroll bar.", "err"); }
+        };
+
+        // Aliases
+        COMMANDS.projects = COMMANDS.ls;
+        COMMANDS.email = COMMANDS.contact;
+
+        function execute(raw) {
+          const trimmed = raw.trim();
+          if (!trimmed) return;
+
+          write("", '<span class="prompt">$</span> ' + escapeHtml(trimmed));
+
+          const parts = trimmed.split(/\s+/);
+          const name = parts[0].toLowerCase();
+          const args = parts.slice(1);
+          const fn = COMMANDS[name];
+
+          if (fn) fn(args);
+          else {
+            write("err", "command not found: " + escapeHtml(parts[0]) +
+              ' — try <span class="k">help</span>');
+          }
+
+          out.scrollTop = out.scrollHeight;
         }
-      }
 
-      const copyBtn = $("#copyEmailBtn");
-      if (copyBtn) {
-        copyBtn.setAttribute("aria-label", "Copy email address");
-        copyBtn.addEventListener("click", () => {
-          copyText(emailAddress).then((ok) => {
-            showToast(ok ? "Copied " + emailAddress : "Copy failed — " + emailAddress);
-          });
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const value = field.value;
+          field.value = "";
+          if (value.trim()) {
+            history.push(value.trim());
+            cursor = history.length;
+            execute(value);
+          }
         });
-      }
 
-      /* ---------------- nav scroll-spy ---------------- */
-
-      const navLinks = $$(".nav-links a");
-      const sections = navLinks
-        .map(link => document.querySelector(link.getAttribute("href")))
-        .filter(Boolean);
-
-      navLinks.forEach(link => {
-        link.addEventListener("click", () => {
-          navLinks.forEach(other => other.classList.toggle("active", other === link));
+        field.addEventListener("keydown", (event) => {
+          if (event.key === "ArrowUp") {
+            if (!history.length) return;
+            event.preventDefault();
+            cursor = Math.max(0, cursor - 1);
+            field.value = history[cursor] || "";
+            setTimeout(() => field.setSelectionRange(field.value.length, field.value.length), 0);
+          } else if (event.key === "ArrowDown") {
+            if (!history.length) return;
+            event.preventDefault();
+            cursor = Math.min(history.length, cursor + 1);
+            field.value = history[cursor] || "";
+          } else if (event.key === "Tab") {
+            const partial = field.value.trim().toLowerCase();
+            if (!partial || partial.includes(" ")) return;
+            const matches = Object.keys(COMMANDS).filter(k => k.startsWith(partial)).sort();
+            if (!matches.length) return;
+            event.preventDefault();
+            field.value = matches.length === 1 ? matches[0] : matches[0];
+          }
         });
-      });
 
-      if ("IntersectionObserver" in window && sections.length) {
-        const spy = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const hash = "#" + entry.target.id;
-            navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === hash));
-          });
-        }, { rootMargin: "-45% 0px -55% 0px" });
-        sections.forEach(section => spy.observe(section));
-      }
+        // Clicking anywhere in the window focuses the prompt, like a real terminal.
+        root.addEventListener("click", (event) => {
+          if (window.getSelection && String(window.getSelection())) return;
+          if (event.target.closest("a, button")) return;
+          field.focus();
+        });
+      })();
 
-      /* ---------------- back to top ---------------- */
+      /* ---------------- scroll: dismiss the skill popup ---------------- */
 
-      const toTop = $("#toTop");
-      if (toTop) {
-        toTop.addEventListener("click", () => window.scrollTo({ top: 0 }));
-      }
-
-      let scrollQueued = false;
       window.addEventListener("scroll", () => {
         if (activeChip) hidePopup();
-        if (scrollQueued) return;
-        scrollQueued = true;
-        requestAnimationFrame(() => {
-          if (toTop) toTop.classList.toggle("show", window.scrollY > 480);
-          scrollQueued = false;
-        });
       }, { passive: true });
-
-      /* ---------------- scroll reveal ---------------- */
-
-      function setupReveal() {
-        const targets = $$(".reveal");
-        if (!targets.length) return;
-
-        const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (!("IntersectionObserver" in window) || reduce) {
-          targets.forEach(el => el.classList.add("in"));
-          return;
-        }
-
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          });
-        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-
-        targets.forEach(el => observer.observe(el));
-      }
 
       /* ---------------- init ---------------- */
 
-      const yearEl = $("#year");
-      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-
       renderProjects();
-      setupReveal();
+      loadDownloadCounts();
+      window.Site.reveal();
     })();
   </script>
 </body>

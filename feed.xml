@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>not — notes</title>
+  <subtitle>Short write-ups, usually about something that was broken for an afternoon and turned out to have a one-line cause.</subtitle>
+  <link rel="self" type="application/atom+xml" href="https://not6741.lol/feed.xml"/>
+  <link rel="alternate" type="text/html" href="https://not6741.lol/notes/"/>
+  <id>https://not6741.lol/notes/</id>
+  <updated>2026-10-16T12:00:00Z</updated>
+  <author>
+    <name>not</name>
+    <uri>https://not6741.lol/</uri>
+  </author>
+  <rights>© not</rights>
+
+  <entry>
+    <title>why my certificate wouldn't issue</title>
+    <link rel="alternate" type="text/html" href="https://not6741.lol/notes/#certificate"/>
+    <id>https://not6741.lol/notes/#certificate</id>
+    <published>2026-10-16T12:00:00Z</published>
+    <updated>2026-10-16T12:00:00Z</updated>
+    <summary>My DNS was perfect the whole time. The certificate job had simply cached one failed lookup and backed off until it gave up — and there is no button to make it retry.</summary>
+  </entry>
+
+  <entry>
+    <title>one 1.5 MB binary, three jobs</title>
+    <link rel="alternate" type="text/html" href="https://not6741.lol/notes/#swiss"/>
+    <id>https://not6741.lol/notes/#swiss</id>
+    <published>2026-10-09T12:00:00Z</published>
+    <updated>2026-10-09T12:00:00Z</updated>
+    <summary>swiss unlocks stubborn files, edits PDFs and generates branding sets. Notes on using the Windows Restart Manager instead of downloading handle.exe, and why pruning PDF objects cut split output from 1 MB per page to 100 KB.</summary>
+  </entry>
+
+  <entry>
+    <title>the artwork on this site made itself</title>
+    <link rel="alternate" type="text/html" href="https://not6741.lol/notes/#artwork"/>
+    <id>https://not6741.lol/notes/#artwork</id>
+    <published>2026-10-02T12:00:00Z</published>
+    <updated>2026-10-02T12:00:00Z</updated>
+    <summary>Every image here is drawn by a Rust binary I wrote — including the marks, which are a rounded square and a handful of triangles. Also: why the cards are 1280x720 when every guide insists on 1200x630.</summary>
+  </entry>
+</feed>
