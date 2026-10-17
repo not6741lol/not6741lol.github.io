@@ -13,6 +13,15 @@
   <rights>© not</rights>
 
   <entry>
+    <title>adding a window without inflating the binary</title>
+    <link rel="alternate" type="text/html" href="https://not6741.lol/notes/#swiss-gui"/>
+    <id>https://not6741.lol/notes/#swiss-gui</id>
+    <published>2026-10-16T12:00:00Z</published>
+    <updated>2026-10-16T12:00:00Z</updated>
+    <summary>The size was the feature, so the windows had to go in a second binary. On splitting swiss into a library with two front-ends, why Cargo silently ignores profile overrides in a member manifest, and why embedded fonts don't replace a toolkit's own.</summary>
+  </entry>
+
+  <entry>
     <title>why my certificate wouldn't issue</title>
     <link rel="alternate" type="text/html" href="https://not6741.lol/notes/#certificate"/>
     <id>https://not6741.lol/notes/#certificate</id>

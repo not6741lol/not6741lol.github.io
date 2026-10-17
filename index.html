@@ -636,10 +636,10 @@
         },
         {
           title: "swiss",
-          desc: "One small binary, three small jobs: it finds whatever is holding a file hostage, merges and splits PDFs, and turns a single image into a full web branding set.",
+          desc: "One small binary, three small jobs: it finds whatever is holding a file hostage, merges and splits PDFs, and turns a single image into a full web branding set. A second binary, swiss-gui, puts the same three jobs in a window — the command line is untouched.",
           image: "swiss.png",
-          tags: ["Rust", "CLI", "PDF", "Windows"],
-          stat: { size: "1.52 MB", repo: "not6741lol/swiss" },
+          tags: ["Rust", "CLI", "GUI", "PDF", "Windows"],
+          stat: { size: "1.55 MB", repo: "not6741lol/swiss" },
           links: [
             { label: "Download", url: "https://github.com/not6741lol/swiss/releases/latest" },
             { label: "Source", url: "https://github.com/not6741lol/swiss" }
@@ -1108,8 +1108,9 @@ SELECT * FROM greetings;`
               '<span class="k">unlock</span><span class="d">find what is holding a file hostage</span>' +
               '<span class="k">pdf</span><span class="d">merge · split · rotate · strip · info</span>' +
               '<span class="k">brand</span><span class="d">one image → favicons, manifest, social card</span>' +
+              '<span class="k">swiss-gui</span><span class="d">the same three jobs, in a window</span>' +
               '</div>');
-            text("1.52 MB of rust. no dependencies to install.", "note");
+            text("1.55 MB of rust. no dependencies to install.", "note");
           },
 
           clear() { out.textContent = ""; },

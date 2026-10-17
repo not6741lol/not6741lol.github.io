@@ -374,6 +374,20 @@ section { padding: clamp(36px, 5vw, 52px) 0; scroll-margin-top: calc(var(--nav-h
 }
 .prose hr { margin: 2em 0; border: 0; border-top: 1px solid var(--border); }
 
+.prose figure { margin: 0 0 1.5em; }
+.prose figure img {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #0b0b0d;
+}
+.prose figcaption {
+  margin-top: 10px;
+  color: var(--faint);
+  font-size: .84rem;
+  line-height: 1.6;
+}
+
 /* ---------------- colour swatches (colophon) ---------------- */
 .swatches { display: grid; gap: 10px; margin: 0 0 1.5em; }
 .swatch { display: flex; align-items: center; gap: 12px; }

@@ -89,6 +89,76 @@
     <section>
       <div class="container">
 
+        <article class="post panel prose post-anchor" id="swiss-gui">
+          <div class="post-head">
+            <h2>adding a window without inflating the binary</h2>
+            <time datetime="2026-10-16">2026-10-16</time>
+          </div>
+
+          <p>
+            Two posts ago I said the size <em>was</em> the feature. So naturally the next thing I did was add a
+            GUI, which is exactly the kind of change that turns 1.5 MB into 15.
+          </p>
+
+          <p>
+            The escape is that the window doesn't have to live in the same file. The three jobs were already
+            mostly logic with a thin layer of printing on top, so I moved the logic into a library and left
+            <code>main.rs</code> as the front-end that prints. <code>swiss-gui</code> is a second binary that
+            calls the same library. One implementation, two ways in.
+          </p>
+
+          <p>
+            That's what makes the preview trustworthy. When you tweak a social card in the window, the image
+            you see isn't a mock-up of the output — it's the same function that writes the file, called into
+            memory instead of onto disk. If the preview and the file ever disagree, that's a bug, not a
+            design decision.
+          </p>
+
+          <figure>
+            <img src="../swiss-gui.png" alt="The swiss-gui window on the Brand tab. Above is a settings panel for the social card; below it is a live preview of the card itself, dark with an amber logo tile and the words one small binary." loading="lazy" decoding="async">
+            <figcaption>
+              The Brand tab. That card at the bottom isn't a mock-up — it was rendered by the same function
+              that writes the file.
+            </figcaption>
+          </figure>
+
+          <h3>two things that bit me</h3>
+
+          <p>
+            <strong>Profile overrides only work in the root manifest.</strong> I wanted
+            <code>opt-level = "z"</code> everywhere except the hot egui crates, because per-frame layout is
+            visibly sluggish when size-optimised. I put the overrides in the GUI's
+            <code>Cargo.toml</code>. Cargo ignored them entirely, and said nothing about it. They have to be
+            in the workspace root:
+          </p>
+
+          <pre><code>[profile.release.package.egui]
+opt-level = 3</code></pre>
+
+          <p>
+            Since only the GUI links egui, the command line never sees any of this.
+          </p>
+
+          <p>
+            <strong>Embedded fonts don't replace the built-in ones.</strong> To make the window look like the
+            site I embedded Inter and JetBrains Mono, which is about a megabyte of the GUI and worth it. But
+            Inter has no arrows and no emoji, so the first build had list buttons you couldn't see. egui's
+            own fonts stay in the stack behind Inter, purely as fallback.
+          </p>
+
+          <p>
+            The card renderer is the one place I deliberately didn't use the site's font, because
+            <code>swiss brand og</code> draws the cards already on this page with your system font. Matching
+            the site inside the window is nice. Quietly restyling every existing card is not.
+          </p>
+
+          <p>
+            The command line comes in at 1.55 MB. The window is a second download, and a much bigger one —
+            about 10 MB, because egui is not a small toolkit. It's there for people who want it, and it costs
+            the command line nothing.
+          </p>
+        </article>
+
         <article class="post panel prose post-anchor" id="certificate">
           <div class="post-head">
             <h2>why my certificate wouldn't issue</h2>
