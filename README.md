@@ -32,6 +32,24 @@ what GitHub Pages serves.
 - **Notes** are `<article>` blocks in `notes/index.html`. Add a matching
   `<entry>` to `feed.xml` and bump the `lastmod` in `sitemap.xml`.
 
+## Previewing locally
+
+The pages use **relative** paths, so you can just open `index.html` from disk and it
+will look exactly like the deployed site — no server needed.
+
+The one thing that does need a server is clicking *between* pages, because a
+`file://` URL has no way to resolve `notes/` to `notes/index.html` (the browser
+shows a directory listing instead). If you want to click around locally:
+
+```
+npx --yes serve .
+```
+
+Then open the address it prints.
+
+`404.html` is the exception to the relative rule: GitHub Pages serves that single
+file for URLs at any depth, so its paths have to stay root-absolute.
+
 ## Theme
 
 Every colour is a custom property at the top of `site.css`: one `:root` block for

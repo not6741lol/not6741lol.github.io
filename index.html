@@ -9,8 +9,8 @@
   <meta name="theme-color" content="#0e0e10">
   <link rel="canonical" href="https://not6741.lol/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e0e10'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='19' font-weight='bold' fill='%23f0a13a' text-anchor='middle'%3En%3C/text%3E%3C/svg%3E">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="alternate" type="application/atom+xml" title="not — notes" href="/feed.xml">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="alternate" type="application/atom+xml" title="not — notes" href="feed.xml">
 
   <!-- Social preview card, 1280x720 so Discord/Slack/X render it large. -->
   <meta property="og:type" content="website">
@@ -58,7 +58,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="site.css">
 
   <style>
     /* ---------------- hero ---------------- */
@@ -402,16 +402,16 @@
 
   <nav class="site-nav" aria-label="Primary">
     <div class="container inner">
-      <a class="brand" href="/">
+      <a class="brand" href="./">
         <span class="mark" aria-hidden="true">n</span>
         <span class="word">not</span>
       </a>
       <div class="nav-right">
         <ul class="nav-links">
-          <li><a href="/#about" class="active">About</a></li>
-          <li><a href="/#projects">Projects</a></li>
-          <li><a href="/notes/" data-page="notes">Notes</a></li>
-          <li><a href="/#contact">Contact</a></li>
+          <li><a href="#about" class="active">About</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="notes/" data-page="notes">Notes</a></li>
+          <li><a href="#contact">Contact</a></li>
         </ul>
         <button id="themeToggle" class="icon-btn" type="button" aria-label="Switch theme" title="Switch theme">
           <i class="fa-solid fa-sun" aria-hidden="true"></i>
@@ -513,7 +513,7 @@
           <h2>featured projects</h2>
           <p class="sub">
             Mostly open source. More on <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>,
-            or read the <a href="/notes/">notes</a> for how some of it got built.
+            or read the <a href="notes/">notes</a> for how some of it got built.
           </p>
         </div>
         <div class="grid" id="projectsGrid"><!-- filled by js --></div>
@@ -545,9 +545,9 @@
     <div class="container inner">
       <span>&copy; <span id="year">2026</span> not</span>
       <div class="footer-links">
-        <a href="/notes/">Notes</a>
-        <a href="/colophon/">Colophon</a>
-        <a href="/feed.xml">RSS</a>
+        <a href="notes/">Notes</a>
+        <a href="colophon/">Colophon</a>
+        <a href="feed.xml">RSS</a>
         <a href="https://github.com/not6741lol" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
@@ -560,7 +560,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="skillPopup" class="popup" role="dialog" aria-label="Skill details" aria-hidden="true"></div>
 
-  <script src="/site.js"></script>
+  <script src="site.js"></script>
   <script>
     (function () {
       "use strict";
@@ -911,7 +911,7 @@ SELECT * FROM greetings;`
         if (skill.blocks) {
           html +=
             `<p class="popup-label">Example</p>` +
-            `<div class="blocks"><img src="/scratchblocks.svg" alt="Scratch blocks: when green flag clicked, say Hello, World!" loading="lazy" decoding="async"></div>`;
+            `<div class="blocks"><img src="scratchblocks.svg" alt="Scratch blocks: when green flag clicked, say Hello, World!" loading="lazy" decoding="async"></div>`;
         } else if (skill.code) {
           html +=
             `<p class="popup-label">Example</p>` +
@@ -1089,8 +1089,8 @@ SELECT * FROM greetings;`
             text("theme: " + next, "ok");
           },
 
-          notes() { text("opening notes…", "ok"); window.location.href = "/notes/"; },
-          colophon() { text("opening colophon…", "ok"); window.location.href = "/colophon/"; },
+          notes() { text("opening notes…", "ok"); window.location.href = "notes/"; },
+          colophon() { text("opening colophon…", "ok"); window.location.href = "colophon/"; },
 
           contact() {
             text(emailAddress, "out");
